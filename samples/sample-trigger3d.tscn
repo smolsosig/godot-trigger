@@ -1,0 +1,211 @@
+[gd_scene load_steps=22 format=3 uid="uid://drt7dvsano1ut"]
+
+[ext_resource type="Texture2D" uid="uid://c7tksxjxqq7qb" path="res://samples/assets/charlie.png" id="1_78kyn"]
+[ext_resource type="Texture2D" uid="uid://dpnliw1tbvv16" path="res://samples/assets/checkered.png" id="2_on3yc"]
+[ext_resource type="Script" uid="uid://b5hxw14vfut7c" path="res://addons/godot-triggers/trigger3d.gd" id="3_t6uoh"]
+[ext_resource type="Script" uid="uid://dspipk0ja4fnc" path="res://addons/godot-triggers/output.gd" id="4_rh7g7"]
+[ext_resource type="AudioStream" uid="uid://bkv5e1d3cf3xm" path="res://samples/assets/congrashyulasion.ogg" id="5_kstvi"]
+
+[sub_resource type="GDScript" id="GDScript_on3yc"]
+script/source = "extends CharacterBody3D
+
+
+const SPEED = 5.0
+const JUMP_VELOCITY = 4.5
+
+
+func _physics_process(delta: float) -> void:
+	# Add the gravity.
+	if not is_on_floor():
+		velocity += get_gravity() * delta
+
+	# Handle jump.
+	if Input.is_action_just_pressed(\"ui_accept\") and is_on_floor():
+		velocity.y = JUMP_VELOCITY
+
+	# Get the input direction and handle the movement/deceleration.
+	# As good practice, you should replace UI actions with custom gameplay actions.
+	var input_dir := Input.get_vector(\"ui_left\", \"ui_right\", \"ui_up\", \"ui_down\")
+	var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
+	if direction:
+		velocity.x = direction.x * SPEED
+		velocity.z = direction.z * SPEED
+	else:
+		velocity.x = move_toward(velocity.x, 0, SPEED)
+		velocity.z = move_toward(velocity.z, 0, SPEED)
+
+	move_and_slide()
+"
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_j8am3"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_on3yc"]
+albedo_texture = ExtResource("1_78kyn")
+billboard_mode = 1
+
+[sub_resource type="QuadMesh" id="QuadMesh_j8am3"]
+material = SubResource("StandardMaterial3D_on3yc")
+size = Vector2(1, 2)
+center_offset = Vector3(0, 1, 0)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_4ob4f"]
+size = Vector3(8.078369, 0.49902344, 8)
+
+[sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_78kyn"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_78kyn"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_j8am3"]
+albedo_texture = ExtResource("2_on3yc")
+uv1_scale = Vector3(5, 4, 5)
+billboard_keep_scale = true
+stencil_flags = 2
+
+[sub_resource type="Environment" id="Environment_on3yc"]
+background_energy_multiplier = 0.0
+ambient_light_source = 3
+ambient_light_color = Color(0.40026394, 0.26974183, 0.7246897, 1)
+adjustment_brightness = 2.16
+
+[sub_resource type="Resource" id="Resource_npfsc"]
+script = ExtResource("4_rh7g7")
+output = "body_entered"
+target = NodePath("../CanvasLayer/Label")
+target_method = &"set_text"
+arguments = ["3..."]
+metadata/_custom_type_script = "uid://dspipk0ja4fnc"
+
+[sub_resource type="Resource" id="Resource_yv01y"]
+script = ExtResource("4_rh7g7")
+output = "body_entered"
+target = NodePath("../CanvasLayer/Label")
+target_method = &"set_text"
+arguments = ["2..."]
+delay = 1.0
+metadata/_custom_type_script = "uid://dspipk0ja4fnc"
+
+[sub_resource type="Resource" id="Resource_o3fn8"]
+script = ExtResource("4_rh7g7")
+output = "body_entered"
+target = NodePath("../CanvasLayer/Label")
+target_method = &"set_text"
+arguments = ["1..."]
+delay = 2.0
+metadata/_custom_type_script = "uid://dspipk0ja4fnc"
+
+[sub_resource type="Resource" id="Resource_jcrpg"]
+script = ExtResource("4_rh7g7")
+output = "body_entered"
+target = NodePath("../CanvasLayer/Label")
+target_method = &"set_text"
+arguments = ["Yippee!"]
+delay = 3.0
+metadata/_custom_type_script = "uid://dspipk0ja4fnc"
+
+[sub_resource type="Resource" id="Resource_yq3v8"]
+script = ExtResource("4_rh7g7")
+output = "body_entered"
+target = NodePath("../CanvasLayer/AudioStreamPlayer")
+target_method = &"play"
+delay = 3.0
+metadata/_custom_type_script = "uid://dspipk0ja4fnc"
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_2spoe"]
+size = Vector3(2.4824219, 3.7419434, 2.8154297)
+
+[sub_resource type="LabelSettings" id="LabelSettings_v1mlc"]
+font_size = 30
+
+[node name="Node3D" type="Node3D"]
+
+[node name="CharacterBody3D" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0493736, 0)
+script = SubResource("GDScript_on3yc")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
+shape = SubResource("CapsuleShape3D_j8am3")
+
+[node name="Sprite3D" type="Sprite3D" parent="CharacterBody3D"]
+transform = Transform3D(1, 0, 0, 0, 0.81242967, 0.5830592, 0, -0.5830592, 0.81242967, 0, -1, 0.5)
+visible = false
+offset = Vector2(0, 100)
+texture = ExtResource("1_78kyn")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="CharacterBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0.5)
+mesh = SubResource("QuadMesh_j8am3")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25048828, 0)
+shape = SubResource("BoxShape3D_4ob4f")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, -4)
+shape = SubResource("WorldBoundaryShape3D_78kyn")
+
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(-1, -8.742278e-08, 3.821371e-15, 0, -4.371139e-08, -1, 8.742278e-08, -1, 4.371139e-08, 0, 0, 4)
+shape = SubResource("WorldBoundaryShape3D_78kyn")
+
+[node name="CollisionShape3D4" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(-4.371139e-08, -1, 4.371139e-08, 0, -4.371139e-08, -1, 1, -4.371139e-08, 1.9106855e-15, 4, 0, 0)
+shape = SubResource("WorldBoundaryShape3D_78kyn")
+
+[node name="CollisionShape3D5" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(-4.371139e-08, 1, -4.371139e-08, 0, -4.371139e-08, -1, -1, -4.371139e-08, 1.9106855e-15, -4, 0, 0)
+shape = SubResource("WorldBoundaryShape3D_78kyn")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D"]
+transform = Transform3D(4, 0, 0, 0, 1, 0, 0, 0, 4, 0, 0, 0)
+mesh = SubResource("PlaneMesh_78kyn")
+surface_material_override/0 = SubResource("StandardMaterial3D_j8am3")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.61894315, 0.78543586, 0, -0.78543586, 0.61894315, 0, 4.4404197, 4.3439093)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_on3yc")
+
+[node name="SpotLight3D" type="SpotLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 2.8917775, 0)
+light_energy = 2.0
+light_bake_mode = 1
+shadow_enabled = true
+spot_range = 6.890685
+spot_angle = 63.281242
+
+[node name="SpotLight3D2" type="SpotLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 2.0825586, 3.7144608, -1.957843)
+light_energy = 10.0
+shadow_enabled = true
+spot_range = 4.559572
+spot_angle = 24.560312
+
+[node name="Trigger3D" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0759945, 2.113599, -2.115368)
+script = ExtResource("3_t6uoh")
+outputs = Array[ExtResource("4_rh7g7")]([SubResource("Resource_npfsc"), SubResource("Resource_yv01y"), SubResource("Resource_o3fn8"), SubResource("Resource_jcrpg"), SubResource("Resource_yq3v8")])
+metadata/_custom_type_script = "uid://b5hxw14vfut7c"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger3D"]
+shape = SubResource("BoxShape3D_2spoe")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Label" type="Label" parent="CanvasLayer"]
+offset_left = 25.0
+offset_top = 24.0
+offset_right = 485.0
+offset_bottom = 201.0
+text = "Arrow keys to move
+Spacebar to jump
+
+Move to where
+the spotlight is!"
+label_settings = SubResource("LabelSettings_v1mlc")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="CanvasLayer"]
+stream = ExtResource("5_kstvi")
+volume_db = -5.0

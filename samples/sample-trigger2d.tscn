@@ -1,0 +1,231 @@
+[gd_scene load_steps=24 format=3 uid="uid://cjhp26cs0m6i3"]
+
+[ext_resource type="Texture2D" uid="uid://c7tksxjxqq7qb" path="res://samples/assets/charlie.png" id="1_312ts"]
+[ext_resource type="Script" uid="uid://ccc8qo82belgl" path="res://addons/godot-triggers/trigger2d.gd" id="2_5a66m"]
+[ext_resource type="Script" uid="uid://dspipk0ja4fnc" path="res://addons/godot-triggers/output.gd" id="3_0xtqv"]
+[ext_resource type="AudioStream" uid="uid://bkv5e1d3cf3xm" path="res://samples/assets/congrashyulasion.ogg" id="4_5q3pj"]
+[ext_resource type="Texture2D" uid="uid://4jrnoy3i8rnd" path="res://samples/assets/computer.png" id="5_03lsx"]
+[ext_resource type="AudioStream" uid="uid://c0rpyb5pbkij8" path="res://samples/assets/vineboonm.ogg" id="6_dh42b"]
+
+[sub_resource type="GDScript" id="GDScript_dh42b"]
+script/source = "extends Trigger2D
+
+## This is an example on how to add custom outputs.
+## In here, we will add the output \"interacted\". This output will be fired when the player is in the
+## trigger and presses the ui_accept button (spacebar).
+
+## We start by giving it its own array of outputs.
+var _on_interacted_outputs: Array
+
+
+## Next, we append any outputs that have \"interacted\" in the output field to the array.
+func _ready() -> void:
+	super._ready()
+	for _output: Output in outputs:
+		if _output.output == \"interacted\":
+			_on_interacted_outputs.append(_output)
+
+
+## Finally, we add in code that detects input when the player is inside the trigger.
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed(\"ui_accept\") && has_overlapping_bodies():
+		_emit_outputs(_on_interacted_outputs)
+"
+
+[sub_resource type="Resource" id="Resource_8g6ho"]
+script = ExtResource("3_0xtqv")
+output = "body_entered"
+target = NodePath("Label")
+target_method = &"show"
+metadata/_custom_type_script = "uid://dspipk0ja4fnc"
+
+[sub_resource type="Resource" id="Resource_cey0n"]
+script = ExtResource("3_0xtqv")
+output = "body_exited"
+target = NodePath("Label")
+target_method = &"hide"
+metadata/_custom_type_script = "uid://dspipk0ja4fnc"
+
+[sub_resource type="Resource" id="Resource_j45kp"]
+script = ExtResource("3_0xtqv")
+output = "interacted"
+target = NodePath("AudioStreamPlayer")
+target_method = &"play"
+metadata/_custom_type_script = "uid://dspipk0ja4fnc"
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_j45kp"]
+size = Vector2(98, 146)
+
+[sub_resource type="LabelSettings" id="LabelSettings_03lsx"]
+font_size = 30
+
+[sub_resource type="GDScript" id="GDScript_5a66m"]
+script/source = "extends CharacterBody2D
+
+const SPEED = 300.0
+const JUMP_VELOCITY = -400.0
+
+func _physics_process(delta: float) -> void:
+	# Add the gravity.
+	if not is_on_floor():
+		velocity += get_gravity() * delta
+
+	# Handle jump.
+	if Input.is_action_just_pressed(\"ui_accept\") and is_on_floor():
+		velocity.y = JUMP_VELOCITY
+
+	# Get the input direction and handle the movement/deceleration.
+	# As good practice, you should replace UI actions with custom gameplay actions.
+	var direction := Input.get_axis(\"ui_left\", \"ui_right\")
+	if direction:
+		velocity.x = direction * SPEED
+	else:
+		velocity.x = move_toward(velocity.x, 0, SPEED)
+
+	move_and_slide()
+"
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_312ts"]
+radius = 39.0
+height = 184.0
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_312ts"]
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_5a66m"]
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_0xtqv"]
+
+[sub_resource type="Resource" id="Resource_5q3pj"]
+script = ExtResource("3_0xtqv")
+output = "body_entered"
+target = NodePath("Label")
+target_method = &"set_text"
+arguments = ["3..."]
+metadata/_custom_type_script = "uid://dspipk0ja4fnc"
+
+[sub_resource type="Resource" id="Resource_03lsx"]
+script = ExtResource("3_0xtqv")
+output = "body_entered"
+target = NodePath("Label")
+target_method = &"set_text"
+arguments = ["2..."]
+delay = 1.0
+metadata/_custom_type_script = "uid://dspipk0ja4fnc"
+
+[sub_resource type="Resource" id="Resource_dh42b"]
+script = ExtResource("3_0xtqv")
+output = "body_entered"
+target = NodePath("Label")
+target_method = &"set_text"
+arguments = ["1..."]
+delay = 2.0
+metadata/_custom_type_script = "uid://dspipk0ja4fnc"
+
+[sub_resource type="Resource" id="Resource_nppxe"]
+script = ExtResource("3_0xtqv")
+output = "body_entered"
+target = NodePath("Label")
+target_method = &"set_text"
+arguments = ["Yippee!"]
+delay = 3.0
+metadata/_custom_type_script = "uid://dspipk0ja4fnc"
+
+[sub_resource type="Resource" id="Resource_p28ir"]
+script = ExtResource("3_0xtqv")
+output = "body_entered"
+target = NodePath("AudioStreamPlayer")
+target_method = &"play"
+delay = 3.0
+metadata/_custom_type_script = "uid://dspipk0ja4fnc"
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0xtqv"]
+size = Vector2(290, 374)
+
+[node name="SampleTrigger2d" type="Node2D"]
+
+[node name="Computer" type="Area2D" parent="."]
+position = Vector2(179, 504)
+collision_layer = 0
+collision_mask = 2
+script = SubResource("GDScript_dh42b")
+repeatable = true
+outputs = Array[ExtResource("3_0xtqv")]([SubResource("Resource_8g6ho"), SubResource("Resource_cey0n"), SubResource("Resource_j45kp")])
+metadata/_custom_type_script = "uid://ccc8qo82belgl"
+
+[node name="Sprite" type="Sprite2D" parent="Computer"]
+texture = ExtResource("5_03lsx")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Computer"]
+shape = SubResource("RectangleShape2D_j45kp")
+
+[node name="Label" type="Label" parent="Computer"]
+visible = false
+offset_left = -95.0
+offset_top = -217.0
+offset_right = 99.0
+offset_bottom = -85.0
+text = "PRESS SPACE!
+v
+v"
+label_settings = SubResource("LabelSettings_03lsx")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="Computer"]
+stream = ExtResource("6_dh42b")
+volume_db = -5.0
+
+[node name="Charlie" type="CharacterBody2D" parent="."]
+position = Vector2(324, 460)
+collision_layer = 2
+script = SubResource("GDScript_5a66m")
+
+[node name="Sprite" type="Sprite2D" parent="Charlie"]
+texture = ExtResource("1_312ts")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Charlie"]
+shape = SubResource("CapsuleShape2D_312ts")
+
+[node name="Ground" type="StaticBody2D" parent="."]
+position = Vector2(567, 515)
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ground"]
+position = Vector2(8, 64)
+shape = SubResource("WorldBoundaryShape2D_312ts")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="Ground"]
+position = Vector2(-569, -252.5)
+rotation = 1.5707964
+shape = SubResource("WorldBoundaryShape2D_5a66m")
+
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="Ground"]
+position = Vector2(586, -252.5)
+rotation = -1.5707964
+shape = SubResource("WorldBoundaryShape2D_0xtqv")
+
+[node name="Trigger2D" type="Area2D" parent="."]
+position = Vector2(865, 368)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("2_5a66m")
+outputs = Array[ExtResource("3_0xtqv")]([SubResource("Resource_5q3pj"), SubResource("Resource_03lsx"), SubResource("Resource_dh42b"), SubResource("Resource_nppxe"), SubResource("Resource_p28ir")])
+metadata/_custom_type_script = "uid://ccc8qo82belgl"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Trigger2D"]
+shape = SubResource("RectangleShape2D_0xtqv")
+
+[node name="Label" type="Label" parent="Trigger2D"]
+offset_left = -760.0
+offset_top = -327.0
+offset_right = -300.0
+offset_bottom = -150.0
+text = "Arrow keys to move left or right
+Spacebar to jump
+
+Move to the right of the screen!"
+label_settings = SubResource("LabelSettings_03lsx")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="Trigger2D"]
+stream = ExtResource("4_5q3pj")
+volume_db = -5.0

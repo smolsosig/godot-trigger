@@ -8,22 +8,23 @@ An attempt to bring Source-like triggers and outputs in Godot, albeit in a limit
 
 ## The output system
 ![sample output list](./screenshots/outputs.png)
+
 The way outputs are handled are, as the description says, similar to how the Source engine handles outputs.
 Here, `Output`s are `Resource`s that contain five variables. They ultimately just describe what method (and additional arguments) to call on a Node.
 
-| Variable        | Type       |Description | Hammer equivalent |
-| :-------------- | :--------- | :---------- | :---------------- |
-| `output`        | String     | What causes this output to fire. Examples include `area_entered`, `area_exited`, etc. | My Output |
-| `target`        | NodePath   | The node we are targeting. | Target Entity |
-| `target_method` | StringName | The name of the method (function) we're calling to the target. | Target Input |
-| `arguments`     | Array      | The arguments to be passed along when calling the target method. | Parameter |
-| `delay`         | float      | The number of seconds to wait after the output event occurs before firing. | Delay |
+| Variable        | Type       | Default value  | Description | Hammer equivalent |
+| :-------------- | :--------- | :------------- | :---------- | :---------------- |
+| `output`        | String     | `area_entered` |What causes this output to fire. Examples include `area_entered`, `area_exited`, etc. | My Output |
+| `target`        | NodePath   |                | The node we are targeting. | Target Entity |
+| `target_method` | StringName |                | The name of the method (function) we're calling to the target. | Target Input |
+| `arguments`     | Array      |                | The arguments to be passed along when calling the target method. | Parameter |
+| `delay`         | float      | `0.0`          | The number of seconds to wait after the output event occurs before firing. | Delay |
 
 Note that the Triggers have assertions for `output`, `target` and `target_method`.
 
 By default, the Triggers only support four outputs:
-- area/body_entered
-- area/body_exited
+- `area_entered`/`body_entered`
+- `area_exited`/`body_exited`
 
 You can, however, extend the trigger to add more outputs. 
 ### Adding custom outputs
@@ -55,6 +56,6 @@ func _ready() -> void:
 ```
 
 ## Known limitations
-Source's outputs have refires. This one does not.
-There are also no special targetnames unlike in Source, where you can call `!activator` to, I don't know, deal 10000 damage to the players that touch it during a Payload explosion or something. Wildcards are also a no-go (`setup_door_*` to call `setup_door_top` and `setup_door_bottom`). This is because the `target` in `Output`s require a NodePath, rather than a simple string name.
-There are no ways to view all the outputs fired onto a Node, unlike Source.
+* Source's outputs have refires. This one does not.
+* There are also no special targetnames unlike in Source, where you can call `!activator` to, I don't know, deal 10000 damage to the players that touch it during a Payload explosion or something. Wildcards are also a no-go (`setup_door_*` to call `setup_door_top` and `setup_door_bottom`). This is because the `target` in `Output`s require a NodePath, rather than a simple string name.
+* There are no ways to view all the outputs fired onto a Node, unlike Source.

@@ -3,7 +3,7 @@ class_name Output extends Resource
 
 ## What causes this output to fire. Examples include [code]area_entered[/code], [code]area_exited[/code], etc.
 ## [br][br][i]"My output named..."[/i]
-@export var output: String = "area_entered"
+@export var output: String
 ## The Node we are targeting.
 ## [br][br][i]"... targets entities named..."[/i]
 @export var target: NodePath
